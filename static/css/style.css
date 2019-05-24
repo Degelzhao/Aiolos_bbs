@@ -1,0 +1,13 @@
+.user-image{
+    width: 30px;
+    height: 30px;
+}
+
+.reply-image{
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.question-image{
+    height: 100px;
+}

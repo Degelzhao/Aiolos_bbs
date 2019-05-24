@@ -1,0 +1,120 @@
+{% extends 'bbs/base.html' %}
+{% load static %}
+
+{% block title %}
+| 详情页
+{% endblock %} 
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %} 
+
+{% block nav-hot %}
+  <div class="nav-scroller bg-white box-shadow">
+    <nav class="nav nav-underline">
+      {% for question in latest_question_list %}
+        {% if question.choice_set.count > 1 %}
+        <a class="nav-link" href="{% url 'bbs:detail' question.id %}">
+          {{ question.question_text }}
+          <span class="badge badge-pill badge-primary  align-text-bottom">{{ question.choice_set.count }}</span>
+        </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+  </div>
+{% endblock %}
+
+
+
+{% block content %}
+
+
+        <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
+    
+          <div class="lh-100 row">
+            <div class="col-md-8">
+                <h6 id="question-text" class="mb-0 text-white lh-100">{{ question.question_text }}</h6>
+                <small>{{ question.author }}</small>
+                <small>{{ question.pub_date }}</small>
+                <span hidden id="question-id">{{ question.id }}</span>
+                {% if  question.author == current_user.user%}
+                  <button class="btn btn-danger" id="btn-edit-question">编辑</button>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+              {% if question.picture %}
+                <img src="{{ question.picture.url }}" alt="question image" class="question-image">         {% endif %}
+            </div>    
+          </div>
+        </div>
+        <div class="">
+          <h6 class="p-3 text-white-50 bg-success rounded box-shadow" id="question-desc">
+            <div>
+             {{ question.get_question_desc_md }}
+            </div>
+          </h6> 
+        </div>
+
+        <div class="my-3 p-3 bg-white rounded box-shadow">
+            <h6 class="border-bottom border-gray pb-2 mb-0">所有回复：</h6>
+            {% for c in page_obj %}
+            <div class="media text-muted pt-3">
+              {% if c.user_picture.url %}
+              <img src="{{ c.user_picture.url }}" alt="user image" class="mr-2 rounded user-image">
+              {% else %}
+              <img src="{% static 'img/bs.png' %}" alt="user image" class="mr-2 rounded user-image">
+              {% endif %}
+              <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <strong class="d-block text-gray-dark">{{ c.author }}</strong>
+                <!-- {{ c.choice_text }} -->
+                {% if c.picture %}
+                <img src="{{ c.picture.url }}" alt="reply-image"  class="reply-image">
+                {% endif %}
+              </p>
+            </div>
+            <div class="p-4">
+              {{ c.get_choice_text_md }}
+            </div>
+            {% endfor %}
+        </div>        
+        {% include 'pagination.html' %}
+        
+
+
+       
+        {% if current_user.is_login %}
+        <h3 class="text-light">欢迎，{{ current_user.user }}</h3>
+        <form action="{% url 'bbs:reply' question.id %}" method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+  
+                <!-- <label for="reply_text">评论<input type="text" id="reply_text" name="reply_text"></label> -->
+
+                <!-- {{ form.as_p }} -->
+              <!-- {% for field in form %}
+                <div class="form-group">
+                  <label for="">{{ field.label }}</label>
+                  <div>{{field}}</div>
+                  {% for error in field.errors %}
+                    <div class="field-error">
+                      {{error}}
+                    </div>
+                  {% endfor %}
+                  <small class="text-black-50">
+                    {{ field.help_text }}
+                  </small>
+                </div>
+              {% endfor %} -->
+              {% include 'bbs/base_form.html' %}
+              {% if error_message %}<p><strong class="text-danger">{{ error_message }}</strong></p>{% endif %}
+                <input type="submit" value="提交" class="btn btn-lg btn-danger btn-block">
+                </form>
+        {% else%}
+        <h3>你没有登录，登录之后才能评论</h3>
+        {% endif %}
+
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/edit.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'bbs/base.html' %}
+{% load static %}
+{% block title %}| 注册{% endblock %}
+{% block register_active %}active{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container contact-form">
+        <div class="contact-image">
+            <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
+        </div>
+        <form class="form-horizontal" role="form" action="{% url 'accounts:register'%}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h3>注册</h3>
+           <div class="row">
+                <div class="col-md-6">
+                    <!-- {{form.as_p}} -->
+                    {% include 'bbs/base_form.html' %}
+                    <div class="form-group">
+                        <input type="submit" name="btnSubmit" class="btnContact" value="提交" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <img src="https://images.unsplash.com/photo-1533629947587-7b04aaa0e837?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=600&q=60" alt="register image" style="width: 100%; height: 150px;">
+                        
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% if error_message %}
+                <p><strong>{{ error_message }}</strong></p>
+        {% endif %}
+        <div class="no-account">
+                已经有账户? <a href="{% url 'accounts:login' %}">点这里</a> 登录.
+        </div>
+</div>
+
+{% endblock %}
+
